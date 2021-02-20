@@ -5,9 +5,10 @@ from random import *
 from math import *
 import neat
 
-screen_width = 600
-screen_height = 600
+screenWidth = 1200
+screenHeight = 600
 generation = 0
+startBrickAmt = 0
 
 class Brick:
     def __init__(self, x, y, c):
@@ -32,9 +33,12 @@ class BrickWall:
     def __init__(self, c):
         self.bricks = []
         self.color = c
-        for i in range(0, 600 - 75, 85):
-            for j in range(0, 300 - 20, 30):
+        for i in range(0, screenWidth - 75, 85):
+            for j in range(0, int(screenHeight / 2) - 20, 30):
                 self.bricks.append(Brick(i, j, self.color))
+        global startBrickAmt
+        if startBrickAmt == 0:
+            startBrickAmt = len(self.bricks)
 
     def draw(self, screen, ball):
         for b in self.bricks:
@@ -47,7 +51,7 @@ class BrickWall:
 
 class Ball:
     def __init__(self, c):
-        self.pos = [300, 400]
+        self.pos = [int(screenWidth / 2), int(screenHeight / 2) + 100]
         self.height = 20
         self.width = 20
         self.color = c
@@ -72,7 +76,7 @@ class Ball:
 
     def draw(self, screen, pad):
         self.pos = [self.pos[0] + self.velX, self.pos[1] + self.velY]
-        if self.pos[0] >= 600 - self.width or self.pos[0] <= 0:
+        if self.pos[0] >= screenWidth - self.width or self.pos[0] <= 0:
             self.velX *= -1
         if self.pos[1] <= 0:
             self.velY *= -1
@@ -85,10 +89,10 @@ class Paddle:
         self.width = 150
         self.color = c
         self.velX = 10
-        self.pos = [300 - self.width / 2, 500 - self.height]
+        self.pos = [int(screenWidth / 2) - self.width / 2, int(screenHeight / 2) + 200 - self.height]
 
     def move(self, val):
-        if val == 1 and self.pos[0] <= screen_width - self.width - self.velX:
+        if val == 1 and self.pos[0] <= screenWidth - self.width - self.velX:
             self.pos[0] += self.velX
         elif val == 2 and self.pos[0] >= 0:
             self.pos[0] -= self.velX
@@ -105,7 +109,7 @@ class BrickPair:
         self.alive = True
 
     def isAlive(self):
-        if self.ball.pos[1] >= 600 - self.ball.height:
+        if self.ball.pos[1] >= screenHeight - self.ball.height:
             self.alive = False
         return self.alive
 
@@ -113,7 +117,7 @@ class BrickPair:
         return [self.ball.pos[0], self.ball.pos[1], self.paddle.pos[0], self.paddle.pos[1], self.wall.bricks[len(self.wall.bricks) - 1].pos[0], self.wall.bricks[len(self.wall.bricks) - 1].pos[1]]
 
     def getFitness(self):
-        return (70 - len(self.wall.bricks)) + (sqrt((self.ball.pos[0] - self.paddle.pos[0]) ** 2 + (self.ball.pos[1] - self.paddle.pos[1]) ** 2))/10
+        return (startBrickAmt - len(self.wall.bricks)) + (sqrt(screenWidth**2 + screenHeight**2) - sqrt((self.ball.pos[0] - self.paddle.pos[0]) ** 2 + (self.ball.pos[1] - self.paddle.pos[1]) ** 2))/10
 
     def draw(self, screen):
         if self.alive:
@@ -133,7 +137,7 @@ def runGame(genomes, config):
         players.append(BrickPair())
 
     pygame.init()
-    screen = pygame.display.set_mode((screen_width, screen_height))
+    screen = pygame.display.set_mode((screenWidth, screenHeight))
     clock = pygame.time.Clock()
     global generation
     generation += 1
@@ -142,7 +146,7 @@ def runGame(genomes, config):
             if event.type == pygame.QUIT:
                 sys.exit(0)
         clock.tick(40)
-        pygame.draw.rect(screen, (0, 0, 0), (0, 0, 600, 600))
+        pygame.draw.rect(screen, (0, 0, 0), (0, 0, screenWidth, screenHeight))
 
         for i, player in enumerate(players):
             output = networks[i].activate(player.getInfo())
