@@ -14,4 +14,6 @@ python3 main.py
 After that, the simulation will begin to run and train automatically!
 
 ## Adjusting the AI
-Screen width and height can be found at the beginning of the main.py file and can be manually adjusted. Evolutionary parameters can be found in the config-feedforward.txt file.
+Screen width and height can be found at the beginning of the main.py file and can be manually adjusted. Evolutionary parameters(number of players, number of input/output/hidden layers, etc.) can be found and adjusted in the config-feedforward.txt file.
+
+Additionally, the fitness function currently takes into account the amount of bricks a given player has broken and the distance from the player to the ball at all times. This calculation can be modified in the getFitness() function in main.py
