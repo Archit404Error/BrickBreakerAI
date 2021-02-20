@@ -14,7 +14,10 @@ python3 main.py
 After that, the simulation will begin to run and train automatically!
 
 Here's an example of what this will look like:
+
 <img src = simulationExample.png>
+
+As can be seen, several paddles and balls begin moving at once. The colors indicate which paddle corresponds to which ball and brick wall.
 
 ## Adjusting the AI
 Screen width and height can be found at the beginning of the main.py file and can be manually adjusted. Evolutionary parameters(number of players, number of input/output/hidden layers, etc.) can be found and adjusted in the config-feedforward.txt file.
