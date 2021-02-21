@@ -106,11 +106,21 @@ class BrickPair:
         self.paddle = Paddle(col)
         self.ball = Ball(col)
         self.wall = BrickWall(col)
+        self.currBricks = len(self.wall.bricks)
+        self.timeSinceHit = 0
         self.alive = True
 
     def isAlive(self):
         if self.ball.pos[1] >= screenHeight - self.ball.height:
             self.alive = False
+        if self.alive:
+            if len(self.wall.bricks) < self.currBricks:
+                self.currBricks = len(self.wall.bricks)
+                self.timeSinceHit = 0
+            else:
+                self.timeSinceHit += 1
+                if self.timeSinceHit == 1250:
+                    self.alive = False
         return self.alive
 
     def getInfo(self):
